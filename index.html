@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>패밀리오피스 상담 예약</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --g9:#0b3a2d; --g8:#12503e; --g7:#1a6550; --g6:#2b7d63; --mint:#e6f2ec; --mint2:#cbe5d8;
+  --bg:#f2f6f4; --card:#fff; --line:#dbe5df; --text:#14211b; --mute:#647069;
+  --warn:#9a5d0c; --warn-soft:#fbf0db; --bad:#b03f37; --bad-soft:#f8e2df; --r:14px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0}
+body{background:var(--bg);color:var(--text);font:16px/1.5 "Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+.wrap{max-width:560px;margin:0 auto;padding:0 16px}
+main.wrap{padding-bottom:150px}
+main.wrap.adm{padding-bottom:100px}
+/* header */
+.head{background:linear-gradient(160deg,var(--g9),var(--g8));color:#fff;padding-bottom:22px;border-radius:0 0 22px 22px}
+.head.slim{padding-bottom:6px}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 0 4px;font-size:14px;gap:8px}
+.brand{font-weight:800;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topbar nav{display:flex;gap:4px;flex:0 0 auto}
+.topbar nav a,.navbtn{text-decoration:none;padding:6px 12px;border-radius:99px;color:rgba(255,255,255,.78);background:none;border:0;cursor:pointer;font-size:14px}
+.topbar nav a.on{background:rgba(255,255,255,.16);color:#fff;font-weight:700}
+.head h1{font-size:26px;font-weight:800;margin:14px 0 4px;letter-spacing:-.02em;line-height:1.3}
+.head p{margin:0;color:rgba(255,255,255,.82);font-size:14.5px}
+/* sections */
+section{margin-top:22px}
+h2{font-size:17px;margin:0 0 10px;display:flex;align-items:center;gap:8px;color:var(--g9);font-weight:800}
+h2 .n,.step .n{width:22px;height:22px;border-radius:50%;background:var(--g8);color:#fff;font-size:12px;display:inline-grid;place-items:center;flex:0 0 auto}
+.cats{display:grid;gap:10px}
+.cat{position:relative;text-align:left;background:var(--card);border:1.5px solid var(--line);border-radius:var(--r);padding:14px 44px 14px 16px;cursor:pointer;width:100%}
+.cat b{display:block;font-size:16px}
+.cat span{display:block;color:var(--mute);font-size:13.5px;margin-top:2px}
+.cat .meta{color:var(--g6);font-weight:700;margin-top:6px;font-size:13px}
+.cat.on{border-color:var(--g8);background:#f7fbf9;box-shadow:0 0 0 3px rgba(18,80,62,.1)}
+.cat.on::after{content:"✓";position:absolute;right:14px;top:14px;width:22px;height:22px;border-radius:50%;background:var(--g8);color:#fff;display:grid;place-items:center;font-size:13px}
+.strip{display:flex;gap:8px;overflow-x:auto;padding:2px 16px 10px;margin:0 -16px;scrollbar-width:none}
+.strip::-webkit-scrollbar{display:none}
+.dchip{flex:0 0 auto;width:56px;padding:6px 0 8px;text-align:center;border:1.5px solid var(--line);background:var(--card);border-radius:12px;cursor:pointer}
+.dchip small{display:block;font-size:11px;color:var(--g6);height:15px;line-height:15px;font-weight:700}
+.dchip i{display:block;font-style:normal;font-size:12px;color:var(--mute)}
+.dchip b{display:block;font-size:20px;line-height:1.2}
+.dchip.on{background:var(--g8);border-color:var(--g8);color:#fff}
+.dchip.on i,.dchip.on small{color:#bfe3d1}
+/* time bars */
+.bars{display:grid;gap:10px}
+.bhalf{background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px 10px 12px}
+.bt{font-size:12px;color:var(--mute);margin-bottom:2px;font-weight:700}
+.blabels{display:grid;grid-template-columns:repeat(10,1fr);font-size:11.5px;color:var(--mute);margin-bottom:3px}
+.blabels span{padding-left:2px}
+.bar{display:grid;grid-template-columns:repeat(10,1fr);border-radius:9px;overflow:hidden}
+.bar>*{height:46px;border:0;margin:0;padding:0;display:block;border-right:1px solid rgba(255,255,255,.95);font-size:10px;color:#fff;overflow:hidden}
+.bar>*:nth-child(2n){border-right:3px solid #fff}
+.bar>*:last-child{border-right:0}
+.cell{cursor:pointer}
+.cell.ok{background:var(--mint2)}
+.cell.ok:hover{background:#b5dbc8}
+.cell.sel{background:var(--g8)}
+.cell.no{background:repeating-linear-gradient(135deg,#eceeed 0 6px,#e2e5e3 6px 12px);cursor:not-allowed}
+.cell.on{background:var(--g6)}
+.cell.off{background:#e6e9e7}
+.cell.open{background:var(--mint2);cursor:default}
+.cell.closed{background:#e6e9e7;cursor:default}
+.cell.bk{background:var(--g8);cursor:default}
+.cell.buf{background:repeating-linear-gradient(135deg,#f3d9a4 0 6px,#fbedd0 6px 12px);cursor:default}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12.5px;color:var(--mute);margin-top:8px}
+.legend i{display:inline-block;width:14px;height:14px;border-radius:4px;vertical-align:-2px;margin-right:5px}
+.picked{margin-top:12px;background:var(--g9);color:#fff;border-radius:12px;padding:12px 14px;font-size:18px;font-weight:800;text-align:center}
+.picked small{font-size:13px;font-weight:500;color:#bfe3d1}
+.picked.mute{background:#fff;color:var(--mute);font-size:14px;font-weight:500;border:1px dashed var(--line)}
+/* forms */
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px}
+label.f{display:block;margin-bottom:12px;font-size:13.5px;color:var(--mute)}
+label.f em{color:var(--bad);font-style:normal}
+input[type=text],input[type=password],input[type=date],input[type=number],select,textarea{width:100%;margin-top:5px;padding:12px 13px;border:1.5px solid var(--line);border-radius:11px;background:#fff;color:var(--text);outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--g7)}
+input[readonly]{background:#f3f5f4;color:var(--mute)}
+.bad input,.bad textarea{border-color:var(--bad)}
+.hint{font-size:12.5px;color:var(--bad);margin-top:4px}
+.sub{font-size:12.5px;color:var(--mute);margin-top:4px}
+textarea{resize:vertical;min-height:76px}
+.pw{letter-spacing:.5em;font-size:20px;text-align:center}
+/* buttons */
+.cta{position:fixed;left:0;right:0;bottom:0;background:rgba(242,246,244,.95);backdrop-filter:blur(8px);border-top:1px solid var(--line);padding:10px 16px calc(12px + env(safe-area-inset-bottom));z-index:20}
+.cta-in{max-width:560px;margin:0 auto}
+.sum{font-size:13.5px;color:var(--mute);margin-bottom:7px;min-height:20px;text-align:center}
+.sum b{color:var(--g9)}
+.btn{border:0;border-radius:12px;padding:13px 18px;font-weight:700;cursor:pointer;background:#e3eae6;color:var(--g9);text-decoration:none;display:inline-block;text-align:center}
+.btn.primary{background:var(--g8);color:#fff}
+.btn.block{width:100%;font-size:16px;padding:16px}
+.btn.ghost{background:#fff;border:1.5px solid var(--line)}
+.btn.danger{background:var(--bad-soft);color:var(--bad)}
+.btn.ok{background:var(--mint);color:var(--g8)}
+.btn.sm{padding:8px 12px;font-size:13.5px;border-radius:10px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.done{text-align:center;padding:30px 0 6px}
+.tick{width:72px;height:72px;border-radius:50%;background:var(--mint);color:var(--g8);display:grid;place-items:center;margin:0 auto 14px;font-size:36px;font-weight:800}
+.tick.wait{background:var(--warn-soft);color:var(--warn)}
+.done h3{font-size:22px;margin:0 0 4px;color:var(--g9)}
+.kv{display:grid;grid-template-columns:76px 1fr;gap:8px 10px;text-align:left;font-size:15px;margin:0}
+.kv dt{color:var(--mute)} .kv dd{margin:0;font-weight:500}
+/* booking cards */
+.chip{display:inline-block;padding:2px 10px;border-radius:99px;font-size:12.5px;font-weight:700;white-space:nowrap}
+.st-pending{background:var(--warn-soft);color:var(--warn)}
+.st-confirmed{background:var(--mint);color:var(--g8)}
+.st-done{background:#e5ebf0;color:#2d4659}
+.st-noshow{background:#eee;color:#555}
+.st-canceled{background:var(--bad-soft);color:var(--bad)}
+.bk{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px 15px;margin-bottom:10px}
+.bk-top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.when{font-weight:500}.when b{font-size:17px;color:var(--g9)}
+.bk-cat{color:var(--g6);font-size:13.5px;font-weight:700;margin:2px 0 6px}
+.bk-who{font-size:14.5px}
+.bk-memo{margin-top:6px;font-size:13.5px;color:var(--mute);background:#f6f9f7;border-radius:8px;padding:7px 10px;white-space:pre-wrap}
+.bufrow{display:flex;align-items:center;gap:8px;margin-top:8px;font-size:13.5px;color:var(--mute)}
+.bufrow select{width:auto;margin:0;padding:6px 10px;font-size:13.5px}
+.acts{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0}
+.stat{background:var(--g9);color:#fff;border-radius:var(--r);padding:12px 10px;text-align:center}
+.stat b{display:block;font-size:24px;font-weight:800}
+.stat span{font-size:12px;color:#bfe3d1}
+.chips{display:flex;gap:7px;overflow-x:auto;padding-bottom:8px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.fchip{flex:0 0 auto;padding:7px 13px;border-radius:99px;border:1.5px solid var(--line);background:#fff;cursor:pointer;font-size:14px}
+.fchip.on{background:var(--g8);border-color:var(--g8);color:#fff}
+.bnav{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);z-index:20;padding-bottom:env(safe-area-inset-bottom)}
+.bnav-in{max-width:560px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr)}
+.bnav button{border:0;background:none;padding:11px 0 10px;font-size:12.5px;color:var(--mute);cursor:pointer}
+.bnav button b{display:block;font-size:19px;line-height:1.2}
+.bnav button.on{color:var(--g8);font-weight:800}
+.row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.tog{width:46px;height:27px;border-radius:99px;background:#cdd5d0;position:relative;border:0;cursor:pointer;flex:0 0 auto}
+.tog::after{content:"";position:absolute;top:3px;left:3px;width:21px;height:21px;border-radius:50%;background:#fff;transition:.15s}
+.tog.on{background:var(--g6)} .tog.on::after{left:22px}
+/* admin schedule */
+.step{display:flex;align-items:center;gap:8px;font-weight:800;color:var(--g9);margin:18px 0 8px}
+.step small{font-weight:500;color:var(--mute);font-size:12.5px}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:8px}
+.cal .h{text-align:center;font-size:12px;color:var(--mute);padding:4px 0}
+.cd{position:relative;aspect-ratio:1/1.05;border:1.5px solid transparent;background:#fff;border-radius:10px;padding:3px 0;text-align:center;cursor:pointer;font-size:14px;line-height:1.25}
+.cd small{display:block;font-size:10.5px;color:var(--mute)}
+.cd.has{background:var(--mint)} .cd.has small{color:var(--g6);font-weight:700}
+.cd.sel{background:var(--g8);color:#fff} .cd.sel small{color:#bfe3d1}
+.cd.today b{text-decoration:underline;text-underline-offset:3px}
+.cd.past{opacity:.4} .cd.blank{background:none;cursor:default}
+.cd .dot{position:absolute;top:2px;right:3px;font-style:normal;font-size:10px;background:#d98e1c;color:#fff;border-radius:99px;min-width:15px;height:15px;line-height:15px;padding:0 3px}
+.rng{display:flex;align-items:center;gap:8px}
+.rng select{margin:0}
+.presets{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.note{font-size:13px;color:var(--mute);background:#fff;border:1px dashed var(--line);border-radius:12px;padding:10px 12px;margin:10px 0}
+.note.warn{background:var(--warn-soft);border-color:#ecd7ab;color:var(--warn)}
+.empty{text-align:center;color:var(--mute);padding:34px 10px;background:#fff;border:1px dashed var(--line);border-radius:var(--r)}
+.ov{position:fixed;inset:0;background:rgba(11,58,45,.45);z-index:50;display:flex;align-items:flex-end;justify-content:center}
+.sheet{background:var(--bg);width:100%;max-width:560px;max-height:92vh;overflow:auto;border-radius:20px 20px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom))}
+.sheet h3{margin:0 0 12px;color:var(--g9);font-weight:800}
+#toast{position:fixed;left:50%;bottom:120px;transform:translateX(-50%);background:var(--g9);color:#fff;padding:11px 18px;border-radius:99px;font-size:14px;z-index:60;opacity:0;pointer-events:none;transition:.2s;max-width:88vw;text-align:center}
+#toast.on{opacity:1}
+.loading{padding:90px 0;text-align:center;color:var(--mute)}
+.spin{width:26px;height:26px;border:3px solid var(--line);border-top-color:var(--g8);border-radius:50%;margin:0 auto 12px;animation:sp .8s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.demo{background:var(--warn-soft);color:var(--warn);font-size:12.5px;text-align:center;padding:6px 10px}
+.mini{font-size:12.5px;color:var(--mute)}
+.foot{text-align:center;margin-top:36px}
+.foot a{color:var(--mute);font-size:12.5px}
+textarea.copy{min-height:180px;font:12.5px/1.4 ui-monospace,monospace}
+</style>
+<script src="config.js"></script>
+</head>
+<body>
+<div id="demo"></div>
+<div id="app"><div class="loading"><div class="spin"></div>불러오는 중…</div></div>
+<div id="modal"></div>
+<div id="toast"></div>
+
+<script>
+/* ===================== 기본 유틸 ===================== */
+const ADMIN_ID = 'hanafo', ADMIN_PW = '3771';
+const START = 480, END = 1080, STEP = 30, N = 20;           // 08:00 ~ 18:00, 30분 칸 20개
+const BUFS = [0, 30, 60, 90, 120];
+const $ = s => document.querySelector(s);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pad = n => String(n).padStart(2, '0');
+const DOW = ['일','월','화','수','목','금','토'];
+const dkey = d => d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate());
+const pkey = k => { const [y,m,d] = k.split('-').map(Number); return new Date(y, m-1, d); };
+const todayKey = () => dkey(new Date());
+const fmtD = k => { const d = pkey(k); return (d.getMonth()+1) + '월 ' + d.getDate() + '일 (' + DOW[d.getDay()] + ')'; };
+const tStr = m => pad(Math.floor(m/60)) + ':' + pad(m%60);
+const atMs = (date, min) => { const d = pkey(date); d.setHours(0, min, 0, 0); return d.getTime(); };
+const ZERO = '0'.repeat(N);
+const rangeMask = (s, e) => Array.from({length: N}, (_, i) => { const t = START + i*STEP; return t >= s && t < e ? '1' : '0'; }).join('');
+const newId = p => p + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const clone = o => o == null ? o : JSON.parse(JSON.stringify(o));
+const STATUS = { pending:'승인대기', confirmed:'확정', done:'완료', noshow:'노쇼', canceled:'취소' };
+const LIVE = ['pending','confirmed'];
+const hashStr = str => { let h1 = 0xdeadbeef, h2 = 0x41c6ce57; for (let i = 0; i < str.length; i++) { const ch = str.charCodeAt(i); h1 = Math.imul(h1 ^ ch, 2654435761); h2 = Math.imul(h2 ^ ch, 1597334677); } h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909); h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909); return (4294967296 * (2097151 & h2) + (h1 >>> 0)).toString(36); };
+async function sha(s) {
+  try { if (window.crypto && crypto.subtle && window.TextEncoder) { const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s)); return Array.from(new Uint8Array(b)).map(x => x.toString(16).padStart(2, '0')).join(''); } } catch(e) {}
+  return 'h' + hashStr(s) + hashStr('#' + s);
+}
+const keyOf = (name, pw) => sha('fo|' + name.trim() + '|' + pw);
+const lsGet = k => { try { return localStorage.getItem(k); } catch(e) { return null; } };
+const lsSet = (k, v) => { try { localStorage.setItem(k, v); } catch(e) {} };
+const ssGet = k => { try { return sessionStorage.getItem(k); } catch(e) { return null; } };
+const ssSet = (k, v) => { try { v == null ? sessionStorage.removeItem(k) : sessionStorage.setItem(k, v); } catch(e) {} };
+let toastT;
+function toast(m) { const t = $('#toast'); t.textContent = m; t.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('on'), 2800); }
+
+/* ===================== 저장소 어댑터 =====================
+   1) config.js 에 Firebase 설정이 있으면 Firestore (GitHub Pages 운영용)
+   2) Claude 아티팩트 안에서 열리면 Claude 공유 저장소
+   3) 둘 다 없으면 체험 모드 (이 브라우저에만 저장)                       */
+function makeLocal() {
+  const KEY = 'fo_booking_demo_v2'; let data = {}; const subs = new Set();
+  const load = () => { try { data = JSON.parse(lsGet(KEY) || '{}'); } catch(e) { data = {}; } };
+  const save = () => lsSet(KEY, JSON.stringify(data));
+  const notify = () => subs.forEach(f => f());
+  load();
+  window.addEventListener('storage', e => { if (e.key === KEY) { load(); notify(); } });
+  const colOf = name => { const m = {}; Object.keys(data).forEach(p => { const [c, id] = p.split('/'); if (c === name && id) m[id] = data[p]; }); return m; };
+  return {
+    mode: 'local',
+    watchCol(n, cb) { const f = () => cb(clone(colOf(n))); subs.add(f); setTimeout(f, 0); return () => subs.delete(f); },
+    watchDoc(p, cb) { const f = () => cb(clone(data[p] || null)); subs.add(f); setTimeout(f, 0); return () => subs.delete(f); },
+    async set(p, d) { data[p] = clone(d); save(); notify(); },
+    async del(p) { delete data[p]; save(); notify(); },
+    async queryEq(c, f, v) { return Object.values(colOf(c)).filter(x => x && x[f] === v).map(clone); },
+    async mutate(p, fn) { load(); const r = fn(clone(data[p] || null)) || {}; if (r.data) { data[p] = clone(r.data); save(); notify(); } return r; }
+  };
+}
+function makeClaude(db) {
+  const H = 'h' + Math.random().toString(36).slice(2);
+  return {
+    mode: 'claude',
+    watchCol(n, cb, err) { return db.collection(n).onSnapshot(s => { const m = {}; s.docs.forEach(d => { if (d.exists) m[d.id] = d.data(); }); cb(m); }, err); },
+    watchDoc(p, cb, err) { return db.doc(p).onSnapshot(s => cb(s.exists ? s.data() : null), err); },
+    set: (p, d) => db.doc(p).set(d),
+    del: p => db.doc(p).delete(),
+    async queryEq(c, f, v) { const s = await db.collection(c).where(f, '==', v).get(); return s.docs.filter(d => d.exists).map(d => clone(d.data())); },
+    async mutate(p, fn) {
+      const ref = db.doc(p); let ok = false;
+      for (let i = 0; i < 12 && !ok; i++) { const l = await ref.acquire({ holder: H, ttlMs: 2000 }); ok = l.acquired; if (!ok) await sleep(300 + Math.random() * 400); }
+      if (!ok) throw { code: 'busy' };
+      const s = await ref.get(); const r = fn(s.exists ? clone(s.data()) : null) || {};
+      if (r.data) await ref.set(r.data);
+      return r;
+    }
+  };
+}
+async function makeFirebase(conf) {
+  const V = '10.12.2';
+  const A = await import('https://www.gstatic.com/firebasejs/' + V + '/firebase-app.js');
+  const F = await import('https://www.gstatic.com/firebasejs/' + V + '/firebase-firestore.js');
+  const fs = F.getFirestore(A.initializeApp(conf));
+  const ref = p => F.doc(fs, ...p.split('/'));
+  return {
+    mode: 'firebase',
+    watchCol(n, cb, err) { return F.onSnapshot(F.collection(fs, n), s => { const m = {}; s.forEach(d => { m[d.id] = d.data(); }); cb(m); }, err); },
+    watchDoc(p, cb, err) { return F.onSnapshot(ref(p), s => cb(s.exists() ? s.data() : null), err); },
+    set: (p, d) => F.setDoc(ref(p), d),
+    del: p => F.deleteDoc(ref(p)),
+    async queryEq(c, f, v) { const s = await F.getDocs(F.query(F.collection(fs, c), F.where(f, '==', v))); return s.docs.map(d => d.data()); },
+    async mutate(p, fn) { let out = {}; await F.runTransaction(fs, async tx => { const s = await tx.get(ref(p)); out = fn(s.exists() ? clone(s.data()) : null) || {}; if (out.data) tx.set(ref(p), out.data); }); return out; }
+  };
+}
+
+/* ===================== 상태 ===================== */
+const DEF = { orgName: '패밀리오피스 상담센터', notice: '상담 분야와 시간을 선택해 주세요.', contact: '', leadHours: 2, maxDays: 30, cancelHours: 2, buffer: 60 };
+let S = null;
+const st = {
+  ready: false, mode: 'local', slow: false, fatal: '', connErr: false,
+  config: {}, cats: {}, avail: {}, days: {}, bookings: {},
+  view: 'book', loginErr: false,
+  book: { cat: null, date: null, start: null, form: { name: '', branch: '', memo: '', pw: '' }, err: false, busy: false, done: null, editId: null, editRec: null },
+  mine: { auth: null, list: null, loading: false, err: '' },
+  adm: { logged: false, tab: 'bookings', filter: 'upcoming', catFilter: '', schedCat: null, month: todayKey().slice(0, 7), sel: [], mask: rangeMask(480, 1080), rs: 480, re: 1080, cfgDraft: null }
+};
+const cfg = () => Object.assign({}, DEF, st.config || {});
+const sortedCats = () => Object.values(st.cats).sort((a, b) => (a.order || 0) - (b.order || 0));
+const activeCats = () => sortedCats().filter(c => c.active !== false);
+const resOf = c => (c.advisor && c.advisor.trim()) ? 'a' + hashStr(c.advisor.trim()) : 'c' + c.id;   // 같은 담당자면 분야가 달라도 일정 공유
+const dayId = (res, date) => res + '__' + date;
+const itemsOf = (res, date) => ((st.days[dayId(res, date)] || {}).items) || {};
+const maskOf = (cid, date) => { const a = st.avail[cid]; const m = a && a.days && a.days[date]; return (typeof m === 'string' && m.length === N) ? m : ZERO; };
+const hoursOf = m => (m.split('').filter(x => x === '1').length) / 2;
+
+/* 두 상담 사이에는 앞 상담의 이동시간(buf) 이상 비어 있어야 함 */
+function findConflict(items, s, e, buf, hardOnly, exId) {
+  let soft = null;
+  for (const id in items) {
+    if (id === exId) continue;
+    const it = items[id];
+    if (s < it.e && it.s < e) return 'overlap';
+    if (s < it.e + (it.buf || 0) && it.s < e + buf) soft = 'buffer';
+  }
+  return hardOnly ? null : soft;
+}
+const myBuf = () => st.book.editRec ? (st.book.editRec.buf != null ? st.book.editRec.buf : cfg().buffer) : cfg().buffer;
+function validStart(cat, date, t) {
+  const e = t + cat.minutes;
+  if (t < START || e > END) return false;
+  const m = maskOf(cat.id, date);
+  for (let x = t; x < e; x += STEP) if (m[(x - START) / STEP] !== '1') return false;
+  if (atMs(date, t) < Date.now() + cfg().leadHours * 3600e3) return false;
+  return !findConflict(itemsOf(resOf(cat), date), t, e, myBuf(), false, st.book.editId);
+}
+function hasStart(cat, date) { for (let t = START; t < END; t += STEP) if (validStart(cat, date, t)) return true; return false; }
+function availableDates(cat) {
+  const a = st.avail[cat.id]; if (!a || !a.days) return [];
+  const t = todayKey(), max = dkey(new Date(Date.now() + cfg().maxDays * 864e5));
+  return Object.keys(a.days).filter(d => d >= t && d <= max && hasStart(cat, d)).sort();
+}
+
+/* ===================== 렌더 ===================== */
+let raf = 0;
+function render() { if (raf) return; raf = requestAnimationFrame(() => { raf = 0; doRender(); }); }
+function renderNow() { if (raf) { cancelAnimationFrame(raf); raf = 0; } doRender(); }
+function doRender() {
+  const ae = document.activeElement;
+  const fid = ae && ae.id && $('#app').contains(ae) ? ae.id : null;
+  let ss = null, se = null; try { if (fid) { ss = ae.selectionStart; se = ae.selectionEnd; } } catch(e) {}
+  const ds = $('#dstrip'), dsl = ds ? ds.scrollLeft : 0, sy = window.scrollY;
+  $('#app').innerHTML = view();
+  const ds2 = $('#dstrip'); if (ds2) ds2.scrollLeft = dsl;
+  if (fid) { const el = document.getElementById(fid); if (el) { el.focus(); try { if (ss != null) el.setSelectionRange(ss, se); } catch(e) {} } }
+  window.scrollTo(0, sy);
+  $('#demo').innerHTML = st.mode === 'local' ? '<div class="demo">체험 모드 · 이 브라우저에만 저장됩니다 (저장소 연결 전)</div>'
+    : st.connErr ? '<div class="demo">저장소 연결에 문제가 있습니다. 잠시 후 새로고침해 주세요.</div>' : '';
+}
+function view() {
+  if (st.fatal) return `<div class="wrap"><div class="empty" style="margin-top:60px">${esc(st.fatal)}</div></div>`;
+  if (!st.ready) return '<div class="loading"><div class="spin"></div>불러오는 중…</div>';
+  if (st.view === 'admin') return st.adm.logged ? adminHTML() : loginHTML();
+  if (st.view === 'mine') return mineHTML();
+  return bookHTML();
+}
+function header(cur, title, sub) {
+  return `<header class="head"><div class="wrap"><div class="topbar"><div class="brand">${esc(cfg().orgName)}</div><nav>
+    <a href="#book" class="${cur === 'book' ? 'on' : ''}">예약하기</a><a href="#mine" class="${cur === 'mine' ? 'on' : ''}">내 예약</a></nav></div>
+    ${title ? `<h1>${title}</h1>` : ''}${sub ? `<p>${sub}</p>` : ''}</div></header>`;
+}
+
+/* ---------- 손님: 예약 ---------- */
+function custBar(cat, date) {
+  const sel = st.book.start, selE = sel != null ? sel + cat.minutes : null;
+  const row = from => {
+    let labels = '', cells = '';
+    for (let i = 0; i < 10; i++) {
+      const t = from + i * STEP;
+      if (i % 2 === 0) labels += `<span style="grid-column:${i + 1}/span 2">${pad(t / 60 | 0)}시</span>`;
+      const inSel = sel != null && t >= sel && t < selE;
+      if (inSel) cells += `<button class="cell sel" data-act="start" data-v="${t}" aria-label="${tStr(t)} 선택됨"></button>`;
+      else if (validStart(cat, date, t)) cells += `<button class="cell ok" data-act="start" data-v="${t}" aria-label="${tStr(t)} 시작"></button>`;
+      else cells += '<span class="cell no"></span>';
+    }
+    return `<div class="blabels">${labels}</div><div class="bar">${cells}</div>`;
+  };
+  return `<div class="bars"><div class="bhalf"><div class="bt">08 – 13시</div>${row(480)}</div><div class="bhalf"><div class="bt">13 – 18시</div>${row(780)}</div></div>
+    <div class="legend"><span><i class="cell ok"></i>선택 가능</span><span><i class="cell sel"></i>선택한 시간</span><span><i class="cell no"></i>선택 불가</span></div>
+    ${sel != null ? `<div class="picked">${tStr(sel)} ~ ${tStr(selE)} <small>(${cat.minutes}분)</small></div>`
+                  : `<div class="picked mute">시작 시간을 누르면 ${cat.minutes}분이 자동으로 선택됩니다</div>`}`;
+}
+function bookHTML() {
+  const B = st.book, c = cfg();
+  if (B.done) return doneHTML();
+  const cats = activeCats();
+  let h = header('book', B.editId ? '예약 변경' : '상담 예약', esc(B.editId ? '바꾸실 날짜와 시간을 선택해 주세요.' : c.notice)) + '<main class="wrap">';
+  if (st.slow) h += '<div class="note warn">연결이 느립니다. 표시된 일정이 최신이 아닐 수 있어요.</div>';
+  if (B.editId) h += `<div class="note">기존 예약: <b>${fmtD(B.editRec.date)} ${tStr(B.editRec.s)}</b> · ${esc(B.editRec.catName)} <button class="btn sm ghost" data-act="editcancel" style="margin-left:6px">변경 취소</button></div>`;
+  h += `<section><h2><span class="n">1</span>상담 분야</h2><div class="cats">` +
+    (cats.map(x => `<button class="cat ${B.cat === x.id ? 'on' : ''}" data-act="cat" data-v="${x.id}"><b>${esc(x.name)}</b>${x.desc ? `<span>${esc(x.desc)}</span>` : ''}<div class="meta">${x.minutes}분${x.advisor ? ' · ' + esc(x.advisor) : ''}</div></button>`).join('')
+      || '<div class="empty">아직 열려 있는 상담 분야가 없습니다.</div>') + '</div></section>';
+  const cat = st.cats[B.cat];
+  if (cat) {
+    const dates = availableDates(cat);
+    h += `<section id="sec2"><h2><span class="n">2</span>날짜 · 시간</h2>`;
+    if (!dates.length) h += `<div class="empty">현재 예약 가능한 일정이 없습니다.${c.contact ? '<br>문의 ' + esc(c.contact) : ''}</div>`;
+    else {
+      let prevM = '';
+      h += '<div class="strip" id="dstrip">' + dates.map(d => {
+        const dt = pkey(d), m = (dt.getMonth() + 1) + '월', lab = m !== prevM ? m : ''; prevM = m;
+        return `<button class="dchip ${B.date === d ? 'on' : ''}" data-act="date" data-v="${d}"><small>${lab}</small><i>${DOW[dt.getDay()]}</i><b>${dt.getDate()}</b></button>`;
+      }).join('') + '</div>';
+      if (B.date) h += custBar(cat, B.date);
+    }
+    h += '</section>';
+  }
+  if (cat && B.start != null) {
+    const f = B.form, e = B.err;
+    h += `<section id="sec3"><h2><span class="n">3</span>예약자 정보</h2><div class="card">
+      <label class="f ${e && f.name.trim().length < 2 ? 'bad' : ''}">이름 <em>*</em><input type="text" id="f-name" data-bind="name" value="${esc(f.name)}" autocomplete="name" placeholder="홍길동" ${B.editId ? 'readonly' : ''}></label>
+      <label class="f">소속 지점 <span class="mini">(선택)</span><input type="text" id="f-branch" data-bind="branch" value="${esc(f.branch)}" placeholder="예) 강남 PB센터"></label>
+      <label class="f">상담 요청사항 <span class="mini">(선택)</span><textarea id="f-memo" data-bind="memo" placeholder="고객 상황이나 궁금한 점을 간단히 적어 주세요">${esc(f.memo)}</textarea></label>
+      ${B.editId ? '' : `<label class="f ${e && !/^\d{4}$/.test(f.pw) ? 'bad' : ''}" style="margin-bottom:0">비밀번호 (숫자 4자리) <em>*</em>
+        <input type="password" id="f-pw" data-bind="pw" inputmode="numeric" maxlength="4" class="pw" value="${esc(f.pw)}" autocomplete="off" placeholder="••••">
+        <div class="sub">예약을 확인 · 변경 · 취소할 때 이름과 함께 입력합니다.</div></label>`}
+    </div></section>`;
+  }
+  const hint = !cat ? '상담 분야를 선택해 주세요' : !B.date ? '날짜를 선택해 주세요' : B.start == null ? '시작 시간을 선택해 주세요'
+    : `<b>${fmtD(B.date)} ${tStr(B.start)}~${tStr(B.start + cat.minutes)}</b> · ${esc(cat.name)}`;
+  h += `<div class="foot"><a href="#admin">관리자</a></div></main>
+    <div class="cta"><div class="cta-in"><div class="sum">${hint}</div>
+    <button class="btn primary block" data-act="submit" ${cat && B.start != null && !B.busy ? '' : 'disabled'}>${B.busy ? '처리 중…' : B.editId ? '변경하기' : '예약하기'}</button></div></div>`;
+  return h;
+}
+function doneHTML() {
+  const b = st.book.done, pend = b.status === 'pending', c = cfg();
+  return header('book', '', '') + `<main class="wrap"><div class="done"><div class="tick ${pend ? 'wait' : ''}">${pend ? '…' : '✓'}</div>
+    <h3>${pend ? '예약이 접수되었어요' : b.changed ? '예약이 변경되었어요' : '예약이 확정되었어요'}</h3>
+    <p class="mini" style="margin:0 0 18px">${pend ? '담당자 확인 후 확정됩니다.' : '아래 일정으로 상담이 준비됩니다.'}</p></div>
+    <div class="card"><dl class="kv"><dt>분야</dt><dd>${esc(b.catName)}</dd><dt>일시</dt><dd>${fmtD(b.date)} ${tStr(b.s)}~${tStr(b.e)}</dd>
+    ${b.advisor ? `<dt>담당</dt><dd>${esc(b.advisor)}</dd>` : ''}<dt>예약자</dt><dd>${esc(b.name)}${b.branch ? ' · ' + esc(b.branch) : ''}</dd></dl></div>
+    <div class="note">변경 · 취소는 <b>내 예약</b>에서 이름과 비밀번호로 할 수 있어요.${c.contact ? '<br>문의 ' + esc(c.contact) : ''}</div>
+    <div class="acts" style="margin-top:14px"><a class="btn ghost" style="flex:1" href="#mine">내 예약 보기</a>
+    <button class="btn primary" style="flex:1" data-act="again">다른 상담 예약</button></div></main>`;
+}
+
+/* ---------- 손님: 내 예약 ---------- */
+function mineHTML() {
+  const M = st.mine, c = cfg();
+  let h = header('mine', '내 예약', '예약할 때 입력한 이름과 비밀번호로 확인합니다.') + '<main class="wrap"><section>';
+  if (!M.auth) {
+    const saved = (() => { try { return JSON.parse(lsGet('fo_form') || '{}'); } catch(e) { return {}; } })();
+    h += `<div class="card"><label class="f">이름<input type="text" id="mi-name" value="${esc(saved.name || '')}" autocomplete="name"></label>
+      <label class="f">비밀번호 (숫자 4자리)<input type="password" id="mi-pw" inputmode="numeric" maxlength="4" class="pw" autocomplete="off" placeholder="••••"></label>
+      ${M.err ? `<div class="hint" style="margin:-4px 0 10px">${esc(M.err)}</div>` : ''}
+      <button class="btn primary block" data-act="mlookup" ${M.loading ? 'disabled' : ''}>${M.loading ? '조회 중…' : '예약 조회'}</button></div>`;
+  } else {
+    h += `<div class="row" style="margin-bottom:10px"><b>${esc(M.auth.name)}님의 예약</b><button class="btn sm ghost" data-act="mlogout">다른 이름으로 조회</button></div>`;
+    if (M.loading || !M.list) h += '<div class="loading" style="padding:40px 0"><div class="spin"></div></div>';
+    else {
+      const list = M.list.slice().sort((a, b) => atMs(b.date, b.s) - atMs(a.date, a.s));
+      h += list.map(b => {
+        const can = LIVE.includes(b.status) && atMs(b.date, b.s) - Date.now() > c.cancelHours * 3600e3;
+        const future = LIVE.includes(b.status) && atMs(b.date, b.s) > Date.now();
+        return `<article class="bk"><div class="bk-top"><div class="when">${fmtD(b.date)} <b>${tStr(b.s)}~${tStr(b.e)}</b></div><span class="chip st-${b.status}">${STATUS[b.status]}</span></div>
+          <div class="bk-cat">${esc(b.catName)}${b.advisor ? ' · ' + esc(b.advisor) : ''}</div>
+          ${b.memo ? `<div class="bk-memo">${esc(b.memo)}</div>` : ''}${b.reason ? `<div class="bk-memo">취소 사유: ${esc(b.reason)}</div>` : ''}
+          ${can ? `<div class="acts"><button class="btn ok sm" data-act="medit" data-v="${b.id}">변경</button><button class="btn danger sm" data-act="mcancel" data-v="${b.id}">취소</button></div>`
+                : future ? `<div class="mini" style="margin-top:8px">시작 ${c.cancelHours}시간 전부터는 담당자에게 문의해 주세요${c.contact ? ' (' + esc(c.contact) + ')' : ''}</div>` : ''}
+        </article>`;
+      }).join('') || '<div class="empty">예약 내역이 없습니다.</div>';
+    }
+  }
+  return h + '</section></main>';
+}
+
+/* ---------- 관리자 ---------- */
+function adminHead() {
+  return `<header class="head slim"><div class="wrap"><div class="topbar"><div class="brand">관리자 · ${esc(cfg().orgName)}</div><nav><a href="#book">예약 화면</a>${st.adm.logged ? '<button class="navbtn" data-act="logout">로그아웃</button>' : ''}</nav></div></div></header>`;
+}
+function loginHTML() {
+  return adminHead() + `<main class="wrap"><section><h2>관리자 로그인</h2><div class="card">
+    <label class="f">아이디<input type="text" id="l-id" autocomplete="username" autocapitalize="off"></label>
+    <label class="f">비밀번호<input type="password" id="l-pw" autocomplete="current-password"></label>
+    ${st.loginErr ? '<div class="hint" style="margin:-4px 0 10px">아이디 또는 비밀번호가 올바르지 않습니다.</div>' : ''}
+    <button class="btn primary block" data-act="login">로그인</button></div></section></main>`;
+}
+function adminHTML() {
+  const A = st.adm;
+  const tabs = [['bookings','📋','예약'],['sched','📅','일정'],['cats','🗂','분야'],['settings','⚙️','설정']];
+  const body = A.tab === 'bookings' ? admBookings() : A.tab === 'cats' ? admCats() : A.tab === 'sched' ? admSched() : admSettings();
+  return adminHead() + `<main class="wrap adm">${body}</main>
+    <div class="bnav"><div class="bnav-in">${tabs.map(t => `<button class="${A.tab === t[0] ? 'on' : ''}" data-act="atab" data-v="${t[0]}"><b>${t[1]}</b>${t[2]}</button>`).join('')}</div></div>`;
+}
+const bufSelect = (id, val) => `<select data-change="buf" data-v="${id}">${BUFS.map(m => `<option value="${m}" ${Number(val) === m ? 'selected' : ''}>${m ? m + '분' : '없음'}</option>`).join('')}</select>`;
+function bkCard(b) {
+  const upcoming = atMs(b.date, b.e) >= Date.now();
+  let a = '';
+  if (b.status === 'pending') a = `<button class="btn ok sm" data-act="bset" data-v="${b.id}|confirmed">확정</button><button class="btn sm" data-act="bedit" data-v="${b.id}">수정</button><button class="btn danger sm" data-act="bcancel" data-v="${b.id}">거절</button>`;
+  else if (b.status === 'confirmed') a = upcoming
+    ? `<button class="btn sm" data-act="bedit" data-v="${b.id}">수정</button><button class="btn danger sm" data-act="bcancel" data-v="${b.id}">취소</button>`
+    : `<button class="btn ok sm" data-act="bset" data-v="${b.id}|done">완료</button><button class="btn sm" data-act="bset" data-v="${b.id}|noshow">노쇼</button>`;
+  return `<article class="bk"><div class="bk-top"><div class="when">${fmtD(b.date)} <b>${tStr(b.s)}~${tStr(b.e)}</b></div><span class="chip st-${b.status}">${STATUS[b.status]}</span></div>
+    <div class="bk-cat">${esc(b.catName)}${b.advisor ? ' · ' + esc(b.advisor) : ''}${b.by === 'admin' ? ' · 관리자 등록' : ''}</div>
+    <div class="bk-who"><b>${esc(b.name)}</b>${b.branch ? ' · ' + esc(b.branch) : ''}</div>
+    ${b.memo ? `<div class="bk-memo">${esc(b.memo)}</div>` : ''}${b.reason ? `<div class="bk-memo">취소 사유: ${esc(b.reason)}</div>` : ''}
+    ${LIVE.includes(b.status) && upcoming ? `<div class="bufrow">상담 후 이동시간 ${bufSelect(b.id, b.buf)}</div>` : ''}
+    ${a ? `<div class="acts">${a}</div>` : ''}</article>`;
+}
+function admBookings() {
+  const A = st.adm, all = Object.values(st.bookings), now = Date.now(), t = todayKey();
+  const endOf = b => atMs(b.date, b.e);
+  const stats = [[all.filter(b => b.date === t && ['pending','confirmed','done'].includes(b.status)).length, '오늘 상담'],
+                 [all.filter(b => b.status === 'pending').length, '승인 대기'],
+                 [all.filter(b => LIVE.includes(b.status) && endOf(b) >= now).length, '예정 전체']];
+  const F = { upcoming: b => LIVE.includes(b.status) && endOf(b) >= now, pending: b => b.status === 'pending',
+              past: b => ['confirmed','done','noshow'].includes(b.status) && endOf(b) < now, canceled: b => b.status === 'canceled', all: () => true };
+  const list = all.filter(F[A.filter] || F.all).filter(b => !A.catFilter || b.cat === A.catFilter);
+  const asc = ['pending','upcoming'].includes(A.filter);
+  list.sort((x, y) => asc ? atMs(x.date, x.s) - atMs(y.date, y.s) : atMs(y.date, y.s) - atMs(x.date, x.s));
+  const fl = [['upcoming','예정'],['pending','승인대기'],['past','지난 상담'],['canceled','취소'],['all','전체']];
+  return `<div class="stats">${stats.map(s => `<div class="stat"><b>${s[0]}</b><span>${s[1]}</span></div>`).join('')}</div>
+    <div class="chips">${fl.map(f => `<button class="fchip ${A.filter === f[0] ? 'on' : ''}" data-act="afilter" data-v="${f[0]}">${f[1]}</button>`).join('')}</div>
+    <div class="row" style="margin:2px 0 12px"><select data-change="catfilter" style="margin:0"><option value="">모든 분야</option>${sortedCats().map(c => `<option value="${c.id}" ${A.catFilter === c.id ? 'selected' : ''}>${esc(c.name)}</option>`).join('')}</select>
+    <button class="btn sm" data-act="admadd" style="white-space:nowrap">+ 직접 예약</button><button class="btn sm" data-act="csv" style="white-space:nowrap">목록 복사</button></div>` +
+    (list.map(bkCard).join('') || '<div class="empty">해당하는 예약이 없습니다.</div>');
+}
+function admCats() {
+  const cats = sortedCats();
+  return `<div class="row" style="margin:16px 0 12px"><h2 style="margin:0">상담 분야 ${cats.length}개</h2><button class="btn primary sm" data-act="catnew">+ 분야 추가</button></div>` +
+    (cats.map((c, i) => `<article class="bk"><div class="row"><div><b>${esc(c.name)}</b><div class="mini">${c.minutes}분 · ${c.approval === 'manual' ? '승인 후 확정' : '즉시 확정'}${c.advisor ? ' · ' + esc(c.advisor) : ''}</div></div>
+      <button class="tog ${c.active !== false ? 'on' : ''}" data-act="cattog" data-v="${c.id}" aria-label="예약 화면 노출"></button></div>
+      ${c.desc ? `<div class="mini" style="margin-top:6px">${esc(c.desc)}</div>` : ''}
+      <div class="acts"><button class="btn sm" data-act="catedit" data-v="${c.id}">수정</button><button class="btn sm ghost" data-act="catmove" data-v="${c.id}|-1" ${i === 0 ? 'disabled' : ''}>↑</button><button class="btn sm ghost" data-act="catmove" data-v="${c.id}|1" ${i === cats.length - 1 ? 'disabled' : ''}>↓</button></div></article>`).join('')
+    || `<div class="empty">등록된 상담 분야가 없습니다.<br><br><button class="btn primary" data-act="seed">샘플 분야 6개로 시작하기</button></div>`) +
+    '<div class="note">스위치를 끄면 예약 화면에서 숨겨집니다. 담당 전문가 이름이 같은 분야끼리는 일정이 겹치지 않도록 함께 계산됩니다.</div>';
+}
+const timeOpts = (from, to, sel) => { let o = ''; for (let t = from; t <= to; t += STEP) o += `<option value="${t}" ${t === sel ? 'selected' : ''}>${tStr(t)}</option>`; return o; };
+function maskBar(mask) {
+  const row = from => { let labels = '', cells = '';
+    for (let i = 0; i < 10; i++) { const t = from + i * STEP, idx = (t - START) / STEP;
+      if (i % 2 === 0) labels += `<span style="grid-column:${i + 1}/span 2">${pad(t / 60 | 0)}시</span>`;
+      cells += `<button class="cell ${mask[idx] === '1' ? 'on' : 'off'}" data-act="mcell" data-v="${idx}" aria-label="${tStr(t)}"></button>`; }
+    return `<div class="blabels">${labels}</div><div class="bar">${cells}</div>`; };
+  return `<div class="bars"><div class="bhalf"><div class="bt">08 – 13시</div>${row(480)}</div><div class="bhalf"><div class="bt">13 – 18시</div>${row(780)}</div></div>
+    <div class="legend"><span><i class="cell on"></i>상담 가능</span><span><i class="cell off"></i>닫힘</span><span>· 칸을 누르면 30분 단위로 열고 닫힙니다</span></div>`;
+}
+function dayStatus(cat, date) {
+  const res = resOf(cat), items = itemsOf(res, date), mask = maskOf(cat.id, date);
+  const cls = t => { for (const id in items) { const it = items[id]; if (t >= it.s && t < it.e) return 'bk'; } for (const id in items) { const it = items[id]; if (t >= it.e && t < it.e + (it.buf || 0)) return 'buf'; } return mask[(t - START) / STEP] === '1' ? 'open' : 'closed'; };
+  const row = from => { let labels = '', cells = ''; for (let i = 0; i < 10; i++) { const t = from + i * STEP; if (i % 2 === 0) labels += `<span style="grid-column:${i + 1}/span 2">${pad(t / 60 | 0)}시</span>`; cells += `<span class="cell ${cls(t)}"></span>`; } return `<div class="blabels">${labels}</div><div class="bar">${cells}</div>`; };
+  const list = Object.values(st.bookings).filter(b => b.res === res && b.date === date && LIVE.includes(b.status)).sort((a, b) => a.s - b.s);
+  return `<div class="step"><span class="n">✓</span>${fmtD(date)} 현황 <small>${esc(cat.advisor || cat.name)}</small></div>
+    <div class="bars"><div class="bhalf"><div class="bt">08 – 13시</div>${row(480)}</div><div class="bhalf"><div class="bt">13 – 18시</div>${row(780)}</div></div>
+    <div class="legend"><span><i class="cell bk"></i>예약</span><span><i class="cell buf"></i>이동시간</span><span><i class="cell open"></i>열림</span><span><i class="cell closed"></i>닫힘</span></div>
+    <div style="margin-top:10px">${list.map(bkCard).join('') || '<div class="mini">이 날 예약이 없습니다.</div>'}</div>
+    <button class="btn ghost" style="width:100%;margin-top:8px" data-act="admadd" data-v="${date}">+ 이 날 직접 예약 추가</button>`;
+}
+function admSched() {
+  const A = st.adm, cats = sortedCats();
+  if (!cats.length) return '<div class="empty" style="margin-top:20px">먼저 “분야” 탭에서 상담 분야를 추가해 주세요.</div>';
+  if (!A.schedCat || !st.cats[A.schedCat]) A.schedCat = cats[0].id;
+  const cat = st.cats[A.schedCat], [Y, M] = A.month.split('-').map(Number), t = todayKey();
+  const first = new Date(Y, M - 1, 1), dim = new Date(Y, M, 0).getDate();
+  let cal = DOW.map(d => `<div class="h">${d}</div>`).join('') + '<div class="cd blank"></div>'.repeat(first.getDay());
+  for (let d = 1; d <= dim; d++) {
+    const k = Y + '-' + pad(M) + '-' + pad(d), hrs = hoursOf(maskOf(cat.id, k)), n = Object.keys(itemsOf(resOf(cat), k)).length;
+    cal += `<button class="cd ${hrs ? 'has' : ''} ${A.sel.includes(k) ? 'sel' : ''} ${k === t ? 'today' : ''} ${k < t ? 'past' : ''}" data-act="sdate" data-v="${k}"><b>${d}</b><small>${hrs ? hrs + '시간' : ''}</small>${n ? `<i class="dot">${n}</i>` : ''}</button>`;
+  }
+  const ns = A.sel.length;
+  return `<div class="chips" style="margin-top:14px">${cats.map(c => `<button class="fchip ${c.id === A.schedCat ? 'on' : ''}" data-act="schedcat" data-v="${c.id}">${esc(c.name)}</button>`).join('')}</div>
+    <div class="step"><span class="n">1</span>날짜 선택 <small>여러 날을 눌러 함께 선택할 수 있어요</small></div>
+    <div class="card"><div class="row"><button class="btn sm ghost" data-act="mon" data-v="-1">‹</button><b>${Y}년 ${M}월</b><button class="btn sm ghost" data-act="mon" data-v="1">›</button></div>
+    <div class="cal">${cal}</div>
+    <div class="acts"><button class="btn sm" data-act="weekdays">이번 달 평일 모두</button><button class="btn sm ghost" data-act="selclear" ${ns ? '' : 'disabled'}>선택 해제</button><span class="mini" style="align-self:center">${ns ? ns + '일 선택됨' : ''}</span></div>
+    <div class="mini" style="margin-top:6px">초록 날짜 = 일정 열림 · 주황 숫자 = 예약 건수</div></div>
+    <div class="step"><span class="n">2</span>상담 가능 시간 <small>08:00 ~ 18:00</small></div>
+    <div class="card"><div class="presets"><button class="btn sm" data-act="preset" data-v="480|1080">종일 08–18</button><button class="btn sm" data-act="preset" data-v="480|720">오전 08–12</button><button class="btn sm" data-act="preset" data-v="780|1080">오후 13–18</button></div>
+    <div class="rng"><select data-change="rs">${timeOpts(START, END - STEP, A.rs)}</select><span>~</span><select data-change="re">${timeOpts(START + STEP, END, A.re)}</select></div>
+    <div style="margin-top:12px">${maskBar(A.mask)}</div></div>
+    <div class="step"><span class="n">3</span>저장</div>
+    <div class="acts" style="margin-top:0"><button class="btn primary" style="flex:2" data-act="savesched" ${ns ? '' : 'disabled'}>${ns ? '선택한 ' + ns + '일에 저장' : '날짜를 먼저 선택하세요'}</button><button class="btn danger" style="flex:1" data-act="closesched" ${ns ? '' : 'disabled'}>선택일 닫기</button></div>
+    <div class="mini" style="margin-top:6px">닫아도 이미 들어온 예약은 유지됩니다.</div>
+    ${ns === 1 ? dayStatus(cat, A.sel[0]) : ''}`;
+}
+function admSettings() {
+  const c = st.adm.cfgDraft || cfg(); st.adm.cfgDraft = c;
+  return `<section><h2>기본 설정</h2><div class="card">
+    <label class="f">기관/센터 이름<input type="text" id="c-org" data-cfg="orgName" value="${esc(c.orgName)}"></label>
+    <label class="f">예약 화면 안내 문구<textarea id="c-notice" data-cfg="notice">${esc(c.notice)}</textarea></label>
+    <label class="f">문의 연락처 (예약 완료 화면에 표시)<input type="text" id="c-contact" data-cfg="contact" value="${esc(c.contact)}" placeholder="02-000-0000"></label>
+    <label class="f">상담 후 이동시간 (손님 예약에 자동 적용)<select id="c-buf" data-cfg="buffer">${BUFS.map(m => `<option value="${m}" ${Number(c.buffer) === m ? 'selected' : ''}>${m ? m + '분' : '없음'}</option>`).join('')}</select>
+      <div class="sub">손님 화면에서는 상담 앞뒤로 이 시간만큼 선택할 수 없습니다. 예약별로는 “예약” 탭에서 바꿀 수 있어요.</div></label>
+    <div class="grid2"><label class="f">예약 마감 (시작 N시간 전)<input type="number" min="0" id="c-lead" data-cfg="leadHours" value="${c.leadHours}"></label>
+    <label class="f">예약 가능 기간 (N일 이내)<input type="number" min="1" max="120" id="c-max" data-cfg="maxDays" value="${c.maxDays}"></label></div>
+    <label class="f">손님 변경·취소 가능 (시작 N시간 전까지)<input type="number" min="0" id="c-cancel" data-cfg="cancelHours" value="${c.cancelHours}"></label>
+    <button class="btn primary block" data-act="cfgsave">저장</button></div></section>
+    <div class="note">저장소: ${st.mode === 'firebase' ? 'Firebase (여러 기기 실시간 공유)' : st.mode === 'claude' ? 'Claude 공유 저장소' : '체험 모드 (이 브라우저에만 저장)'}</div>`;
+}
+
+/* ===================== 모달 ===================== */
+function modal(html) { $('#modal').innerHTML = `<div class="ov"><div class="sheet">${html}</div></div>`; }
+function closeModal() { $('#modal').innerHTML = ''; }
+function confirmModal(title, body, act, v, label, withReason) {
+  modal(`<h3>${title}</h3><p style="margin:0 0 12px;color:var(--mute)">${body}</p>${withReason ? '<label class="f">사유 (선택)<input type="text" id="m-reason" placeholder="손님 화면에 표시됩니다"></label>' : ''}
+    <div class="acts"><button class="btn danger" style="flex:2" data-act="${act}" data-v="${v}">${label}</button><button class="btn" data-act="mclose">돌아가기</button></div>`);
+}
+function catModal(id) {
+  const c = id ? st.cats[id] : { name: '', advisor: '', desc: '', minutes: 60, approval: 'auto' };
+  modal(`<h3>${id ? '분야 수정' : '분야 추가'}</h3>
+    <label class="f">분야 이름 <em>*</em><input type="text" id="m-name" value="${esc(c.name)}" placeholder="예) 상속·증여"></label>
+    <label class="f">담당 전문가<input type="text" id="m-adv" value="${esc(c.advisor || '')}" placeholder="예) 김OO 세무사"></label>
+    <label class="f">한 줄 설명<input type="text" id="m-desc" value="${esc(c.desc || '')}" placeholder="손님에게 보이는 설명"></label>
+    <div class="grid2"><label class="f">상담 시간<select id="m-min">${[30, 60, 90, 120].map(m => `<option ${c.minutes == m ? 'selected' : ''} value="${m}">${m}분</option>`).join('')}</select></label>
+    <label class="f">확정 방식<select id="m-app"><option value="auto" ${c.approval !== 'manual' ? 'selected' : ''}>즉시 확정</option><option value="manual" ${c.approval === 'manual' ? 'selected' : ''}>승인 후 확정</option></select></label></div>
+    <div class="acts"><button class="btn primary" style="flex:2" data-act="catsave" data-v="${id || ''}">저장</button>${id ? `<button class="btn danger" data-act="catdel" data-v="${id}">삭제</button>` : ''}<button class="btn" data-act="mclose">닫기</button></div>`);
+}
+function admBookModal(b, date) {
+  const cats = sortedCats(); if (!cats.length) { toast('먼저 상담 분야를 추가해 주세요'); return; }
+  const x = b || { cat: st.adm.schedCat || cats[0].id, date: date || todayKey(), s: 600, name: '', branch: '', memo: '', buf: cfg().buffer };
+  modal(`<h3>${b ? '예약 수정' : '직접 예약 추가'}</h3>
+    <label class="f">분야<select id="m-cat">${cats.map(c => `<option value="${c.id}" ${c.id === x.cat ? 'selected' : ''}>${esc(c.name)} (${c.minutes}분)</option>`).join('')}</select></label>
+    <div class="grid2"><label class="f">날짜<input type="date" id="m-date" value="${x.date}"></label><label class="f">시작 시간<select id="m-s">${timeOpts(START, END - STEP, x.s)}</select></label></div>
+    <label class="f">이름 <em>*</em><input type="text" id="m-name" value="${esc(x.name)}"></label>
+    <label class="f">소속 지점<input type="text" id="m-branch" value="${esc(x.branch || '')}"></label>
+    <label class="f">요청사항<textarea id="m-memo">${esc(x.memo || '')}</textarea></label>
+    <label class="f">상담 후 이동시간<select id="m-buf">${BUFS.map(m => `<option value="${m}" ${Number(x.buf) === m ? 'selected' : ''}>${m ? m + '분' : '없음'}</option>`).join('')}</select></label>
+    ${b ? '' : '<label class="f">손님 비밀번호 (선택, 숫자 4자리)<input type="password" id="m-pw" inputmode="numeric" maxlength="4" autocomplete="off"><div class="sub">입력하면 손님이 “내 예약”에서 직접 확인·변경할 수 있어요.</div></label>'}
+    <div class="note" style="margin-top:0">관리자는 열린 일정이나 이동시간과 관계없이 등록할 수 있습니다. 상담 시간 자체가 겹치면 등록되지 않습니다.</div>
+    <div class="acts"><button class="btn primary" style="flex:2" data-act="admsave" data-v="${b ? b.id : ''}">저장</button><button class="btn" data-act="mclose">닫기</button></div>`);
+}
+
+/* ===================== 데이터 처리 ===================== */
+function dbErr(e) {
+  console.error(e); const c = e && e.code;
+  toast(c === 'busy' ? '다른 예약을 처리 중이에요. 잠시 후 다시 시도해 주세요'
+    : (c === 'invalid_argument' || c === 'permission-denied') ? '저장 권한이 없습니다. 관리자에게 문의해 주세요'
+    : c === 'quota_exceeded' ? '저장 공간이 가득 찼습니다' : '잠시 후 다시 시도해 주세요');
+}
+const dayRemove = (did, id) => S.mutate('days/' + did, d => { const items = Object.assign({}, (d && d.items) || {}); if (!(id in items)) return {}; delete items[id]; return { data: { items } }; });
+/* 일자 문서를 잠그고 겹침을 다시 확인한 뒤에만 예약을 저장 (동시 예약 방지) */
+async function reserve(rec, old, hardOnly) {
+  const did = dayId(rec.res, rec.date), oid = old ? dayId(old.res, old.date) : null;
+  let prev = null;
+  const r = await S.mutate('days/' + did, d => {
+    const items = Object.assign({}, (d && d.items) || {});
+    prev = items[rec.id] || null; delete items[rec.id];
+    const c = findConflict(items, rec.s, rec.e, rec.buf, hardOnly, null);
+    if (c) return { abort: c };
+    items[rec.id] = { s: rec.s, e: rec.e, buf: rec.buf };
+    return { data: { items } };
+  });
+  if (r.abort) return { ok: false, reason: r.abort };
+  try { await S.set('bookings/' + rec.id, rec); }
+  catch(err) {
+    await S.mutate('days/' + did, d => { const items = Object.assign({}, (d && d.items) || {}); if (prev) items[rec.id] = prev; else delete items[rec.id]; return { data: { items } }; }).catch(() => {});
+    throw err;
+  }
+  if (oid && oid !== did) await dayRemove(oid, rec.id).catch(() => {});
+  return { ok: true };
+}
+async function cancelBooking(b, by, reason) {
+  await S.set('bookings/' + b.id, Object.assign({}, b, { status: 'canceled', canceledBy: by, reason: reason || '', updatedAt: Date.now() }));
+  await dayRemove(dayId(b.res, b.date), b.id);
+}
+async function submitBooking() {
+  const B = st.book, f = B.form, cat = st.cats[B.cat];
+  if (B.busy || !cat || B.start == null) return;
+  if (f.name.trim().length < 2 || (!B.editId && !/^\d{4}$/.test(f.pw))) { B.err = true; renderNow(); toast('이름과 비밀번호(숫자 4자리)를 확인해 주세요'); scrollTo$('#sec3'); return; }
+  if (!validStart(cat, B.date, B.start)) { B.start = null; renderNow(); toast('선택한 시간이 방금 마감되었어요. 다시 선택해 주세요'); return; }
+  B.busy = true; renderNow();
+  try {
+    const old = B.editRec;
+    const key = old ? old.key : await keyOf(f.name, f.pw);
+    const rec = Object.assign({}, old || {}, {
+      id: old ? old.id : newId('b'), cat: cat.id, catName: cat.name, advisor: cat.advisor || '', res: resOf(cat),
+      date: B.date, s: B.start, e: B.start + cat.minutes, minutes: cat.minutes, buf: myBuf(),
+      name: old ? old.name : f.name.trim(), branch: f.branch.trim(), memo: f.memo.trim(), key,
+      status: cat.approval === 'manual' ? 'pending' : 'confirmed', by: old ? old.by : 'customer',
+      createdAt: old ? old.createdAt : Date.now(), updatedAt: Date.now() });
+    delete rec.changed; delete rec.reason;
+    const r = await reserve(rec, old, false);
+    if (!r.ok) { B.busy = false; B.start = null; renderNow(); toast('방금 다른 예약이 들어온 시간이에요. 다른 시간을 선택해 주세요'); return; }
+    lsSet('fo_form', JSON.stringify({ name: rec.name, branch: rec.branch }));
+    st.mine.auth = { name: rec.name, key }; ssSet('fo_mine', JSON.stringify(st.mine.auth)); st.mine.list = null;
+    B.busy = false; B.done = Object.assign({}, rec, { changed: !!old }); B.editId = null; B.editRec = null; f.pw = '';
+    renderNow(); window.scrollTo(0, 0);
+  } catch(e) { B.busy = false; renderNow(); dbErr(e); }
+}
+async function mineRefresh() {
+  const M = st.mine; if (!M.auth) return;
+  M.loading = true; renderNow();
+  try { M.list = await S.queryEq('bookings', 'key', M.auth.key); } catch(e) { dbErr(e); M.list = M.list || []; }
+  M.loading = false; renderNow();
+}
+async function setBuf(id, buf) {
+  const b = st.bookings[id]; if (!b) return;
+  try {
+    await S.set('bookings/' + id, Object.assign({}, b, { buf, updatedAt: Date.now() }));
+    await S.mutate('days/' + dayId(b.res, b.date), d => { const items = Object.assign({}, (d && d.items) || {}); if (!items[id]) return {}; items[id] = Object.assign({}, items[id], { buf }); return { data: { items } }; });
+    const clash = findConflict(itemsOf(b.res, b.date), b.s, b.e, buf, false, id);
+    toast(clash ? '변경했습니다 · 다음 상담과 이동시간이 겹칩니다' : '이동시간을 ' + (buf ? buf + '분' : '없음') + '으로 바꿨습니다');
+  } catch(e) { dbErr(e); }
+}
+async function seedData() {
+  const base = [['상속·증여','자산 이전 시기와 방법, 세금 구조 설계',60,'auto'],['가업승계·법인','법인 지분 구조와 승계 전략',60,'manual'],['세무·절세','금융소득·양도세 등 세무 점검',60,'auto'],
+    ['부동산·자산관리','부동산 포트폴리오 점검과 활용',60,'auto'],['신탁·유언대용','유언대용신탁, 가족 신탁 설계',60,'auto'],['해외자산·이민','해외 자산 신고와 거주지 이슈',90,'manual']];
+  try {
+    const mask = rangeMask(480, 1080);
+    for (let i = 0; i < base.length; i++) {
+      const b = base[i], id = newId('c') + i;
+      await S.set('cats/' + id, { id, name: b[0], desc: b[1], minutes: b[2], approval: b[3], advisor: '', active: true, order: i + 1 });
+      const days = {}; for (let k = 0; k < 14; k++) { const d = new Date(Date.now() + k * 864e5); if (d.getDay() > 0 && d.getDay() < 6) days[dkey(d)] = mask; }
+      await S.set('avail/' + id, { days });
+    }
+    if (!st.config || !st.config.orgName) await S.set('config/main', DEF);
+    toast('샘플 분야 6개와 2주 일정(평일 08–18시)을 만들었습니다');
+  } catch(e) { dbErr(e); }
+}
+function csvText() {
+  const rows = Object.values(st.bookings).sort((a, b) => atMs(a.date, a.s) - atMs(b.date, b.s));
+  const q = v => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"';
+  return ['날짜,시작,종료,분야,담당,이름,지점,요청사항,이동시간(분),상태'].concat(rows.map(b => [b.date, tStr(b.s), tStr(b.e), b.catName, b.advisor, b.name, b.branch, b.memo, b.buf, STATUS[b.status]].map(q).join(','))).join('\n');
+}
+function scrollTo$(sel) { setTimeout(() => { const el = $(sel); if (el && el.scrollIntoView) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 60); }
+function rangeFromMask(m) { const i = m.indexOf('1'), j = m.lastIndexOf('1'); return i < 0 ? null : [START + i * STEP, START + (j + 1) * STEP]; }
+async function writeAvail(cid, updates) {
+  const cur = Object.assign({}, (st.avail[cid] && st.avail[cid].days) || {});
+  const cutoff = dkey(new Date(Date.now() - 60 * 864e5));
+  Object.keys(cur).forEach(k => { if (k < cutoff) delete cur[k]; });
+  Object.keys(updates).forEach(k => { if (updates[k] === ZERO) delete cur[k]; else cur[k] = updates[k]; });
+  await S.set('avail/' + cid, { days: cur });
+}
+
+/* ===================== 동작 ===================== */
+const ACT = {
+  /* 손님 */
+  cat(v) { const B = st.book; B.cat = v; B.start = null; const ds = availableDates(st.cats[v]); B.date = ds.includes(B.date) ? B.date : (ds[0] || null); renderNow(); scrollTo$('#sec2'); },
+  date(v) { st.book.date = v; st.book.start = null; renderNow(); },
+  start(v) {
+    const B = st.book, cat = st.cats[B.cat], t = Number(v);
+    if (!validStart(cat, B.date, t)) { toast('이 시간부터는 ' + cat.minutes + '분 상담이 어려워요'); return; }
+    const first = B.start == null; B.start = t; renderNow(); if (first) scrollTo$('#sec3');
+  },
+  submit() { submitBooking(); },
+  again() { const B = st.book; B.done = null; B.cat = B.date = B.start = null; B.err = false; B.form.memo = ''; B.form.pw = ''; location.hash = '#book'; renderNow(); window.scrollTo(0, 0); },
+  editcancel() { const B = st.book; B.editId = null; B.editRec = null; B.cat = B.date = B.start = null; B.form.memo = ''; location.hash = '#mine'; },
+  async mlookup() {
+    const M = st.mine, name = ($('#mi-name').value || '').trim(), pw = $('#mi-pw').value || '';
+    if (name.length < 2 || !/^\d{4}$/.test(pw)) { M.err = '이름과 비밀번호(숫자 4자리)를 입력해 주세요.'; renderNow(); return; }
+    M.loading = true; M.err = ''; renderNow();
+    try {
+      const key = await keyOf(name, pw), list = await S.queryEq('bookings', 'key', key);
+      M.loading = false;
+      if (!list.length) { M.err = '일치하는 예약이 없습니다. 이름과 비밀번호를 확인해 주세요.'; renderNow(); return; }
+      M.auth = { name, key }; M.list = list; ssSet('fo_mine', JSON.stringify(M.auth)); renderNow();
+    } catch(e) { M.loading = false; renderNow(); dbErr(e); }
+  },
+  mlogout() { st.mine.auth = null; st.mine.list = null; st.mine.err = ''; ssSet('fo_mine', null); renderNow(); },
+  medit(v) {
+    const b = (st.mine.list || []).find(x => x.id === v); if (!b) return;
+    if (!st.cats[b.cat] || st.cats[b.cat].active === false) { toast('지금은 이 분야의 예약 변경이 어려워요. 담당자에게 문의해 주세요'); return; }
+    Object.assign(st.book, { cat: b.cat, date: b.date, start: null, editId: b.id, editRec: b, err: false, busy: false, done: null,
+      form: { name: b.name, branch: b.branch || '', memo: b.memo || '', pw: '' } });
+    const ds = availableDates(st.cats[b.cat]); if (!ds.includes(b.date)) st.book.date = ds[0] || null;
+    if (st.book.date === b.date && validStart(st.cats[b.cat], b.date, b.s)) st.book.start = b.s;
+    location.hash = '#book';
+  },
+  mcancel(v) { confirmModal('예약을 취소할까요?', '취소하면 이 시간은 다른 분이 예약할 수 있게 됩니다.', 'mcancel2', v, '예약 취소', false); },
+  async mcancel2(v) {
+    closeModal(); const b = (st.mine.list || []).find(x => x.id === v); if (!b) return;
+    try { await cancelBooking(b, 'customer', ''); toast('예약을 취소했습니다'); await mineRefresh(); } catch(e) { dbErr(e); }
+  },
+  /* 관리자 */
+  login() {
+    const id = ($('#l-id').value || '').trim(), pw = $('#l-pw').value || '';
+    if (id === ADMIN_ID && pw === ADMIN_PW) { st.adm.logged = true; st.loginErr = false; ssSet('fo_admin', '1'); startAdminSubs(); renderNow(); }
+    else { st.loginErr = true; renderNow(); }
+  },
+  logout() { st.adm.logged = false; ssSet('fo_admin', null); location.hash = '#book'; renderNow(); },
+  atab(v) { st.adm.tab = v; renderNow(); window.scrollTo(0, 0); },
+  afilter(v) { st.adm.filter = v; renderNow(); },
+  async bset(v) {
+    const [id, s] = v.split('|'), b = st.bookings[id]; if (!b) return;
+    try { await S.set('bookings/' + id, Object.assign({}, b, { status: s, updatedAt: Date.now() })); toast(s === 'confirmed' ? '확정했습니다' : '처리했습니다'); } catch(e) { dbErr(e); }
+  },
+  bcancel(v) { confirmModal('예약을 취소할까요?', '손님 화면에 “취소”로 표시되고 그 시간이 다시 열립니다.', 'bcancel2', v, '취소 처리', true); },
+  async bcancel2(v) {
+    const r = (($('#m-reason') || {}).value || '').trim(); closeModal(); const b = st.bookings[v]; if (!b) return;
+    try { await cancelBooking(b, 'admin', r); toast('취소했습니다'); } catch(e) { dbErr(e); }
+  },
+  bedit(v) { const b = st.bookings[v]; if (b) admBookModal(b); },
+  admadd(v) { admBookModal(null, v); },
+  async admsave(v) {
+    const old = v ? st.bookings[v] : null, cat = st.cats[$('#m-cat').value];
+    const date = $('#m-date').value, s = Number($('#m-s').value), name = $('#m-name').value.trim(), buf = Number($('#m-buf').value);
+    if (!cat || !date) { toast('분야와 날짜를 확인해 주세요'); return; }
+    if (name.length < 1) { toast('이름을 입력해 주세요'); return; }
+    if (s + cat.minutes > END) { toast('18:00 이후에 끝나는 상담은 등록할 수 없어요'); return; }
+    const pwEl = $('#m-pw'), pw = pwEl ? pwEl.value : '';
+    if (pw && !/^\d{4}$/.test(pw)) { toast('비밀번호는 숫자 4자리입니다'); return; }
+    const rec = Object.assign({}, old || {}, {
+      id: old ? old.id : newId('b'), cat: cat.id, catName: cat.name, advisor: cat.advisor || '', res: resOf(cat),
+      date, s, e: s + cat.minutes, minutes: cat.minutes, buf, name, branch: $('#m-branch').value.trim(), memo: $('#m-memo').value.trim(),
+      key: old ? (old.key || '') : (pw ? await keyOf(name, pw) : ''), status: old ? old.status : 'confirmed', by: old ? (old.by || 'admin') : 'admin',
+      createdAt: old ? old.createdAt : Date.now(), updatedAt: Date.now() });
+    const soft = findConflict(itemsOf(rec.res, date), s, rec.e, buf, false, rec.id);
+    try {
+      const r = await reserve(rec, old, true);
+      if (!r.ok) { toast('같은 시간에 다른 상담이 있어 저장할 수 없습니다'); return; }
+      closeModal(); toast(soft ? '저장했습니다 · 이동시간이 겹치니 확인해 주세요' : '저장했습니다');
+    } catch(e) { dbErr(e); }
+  },
+  csv() { modal(`<h3>예약 목록 (CSV)</h3><textarea class="copy" id="m-csv" readonly>${esc(csvText())}</textarea><div class="acts"><button class="btn primary" style="flex:2" data-act="csvcopy">복사</button><button class="btn" data-act="mclose">닫기</button></div><div class="mini" style="margin-top:8px">엑셀에 붙여넣으면 열로 나뉩니다.</div>`); },
+  async csvcopy() { const el = $('#m-csv'); el.select(); try { await navigator.clipboard.writeText(el.value); toast('복사했습니다'); } catch(e) { toast('길게 눌러 직접 복사해 주세요'); } },
+  mclose() { closeModal(); },
+  catnew() { catModal(null); },
+  catedit(v) { catModal(v); },
+  async catsave(v) {
+    const name = $('#m-name').value.trim(); if (!name) { toast('분야 이름을 입력해 주세요'); return; }
+    const old = v ? st.cats[v] : null, id = v || newId('c');
+    const order = old ? old.order : Math.max(0, ...Object.values(st.cats).map(c => c.order || 0)) + 1;
+    const c = { id, name, advisor: $('#m-adv').value.trim(), desc: $('#m-desc').value.trim(), minutes: +$('#m-min').value, approval: $('#m-app').value, active: old ? old.active !== false : true, order };
+    try { await S.set('cats/' + id, c); closeModal(); toast('저장했습니다'); } catch(e) { dbErr(e); }
+  },
+  catdel(v) {
+    const live = Object.values(st.bookings).filter(b => b.cat === v && LIVE.includes(b.status) && atMs(b.date, b.e) >= Date.now()).length;
+    if (live) { toast('예정된 예약 ' + live + '건이 있어 삭제할 수 없습니다. 스위치로 숨겨 주세요'); return; }
+    confirmModal('분야를 삭제할까요?', '이 분야의 열린 일정도 함께 삭제됩니다. 지난 예약 기록은 남습니다.', 'catdel2', v, '삭제', false);
+  },
+  async catdel2(v) { closeModal(); try { await S.del('cats/' + v); await S.del('avail/' + v); toast('삭제했습니다'); } catch(e) { dbErr(e); } },
+  async cattog(v) { const c = st.cats[v]; try { await S.set('cats/' + v, Object.assign({}, c, { active: c.active === false })); } catch(e) { dbErr(e); } },
+  async catmove(v) {
+    const [id, d] = v.split('|'), cs = sortedCats(), i = cs.findIndex(c => c.id === id), j = i + Number(d);
+    if (j < 0 || j >= cs.length) return;
+    try { await S.set('cats/' + cs[i].id, Object.assign({}, cs[i], { order: j + 1 })); await S.set('cats/' + cs[j].id, Object.assign({}, cs[j], { order: i + 1 })); } catch(e) { dbErr(e); }
+  },
+  seed() { seedData(); },
+  schedcat(v) { st.adm.schedCat = v; st.adm.sel = []; renderNow(); },
+  sdate(v) {
+    const A = st.adm, was = A.sel.length;
+    A.sel = A.sel.includes(v) ? A.sel.filter(x => x !== v) : A.sel.concat(v).sort();
+    if (was === 0 && A.sel.length === 1) { const m = maskOf(A.schedCat, v), r = rangeFromMask(m); if (r) { A.mask = m; A.rs = r[0]; A.re = r[1]; } }
+    renderNow();
+  },
+  mon(v) { const [y, m] = st.adm.month.split('-').map(Number), d = new Date(y, m - 1 + Number(v), 1); st.adm.month = d.getFullYear() + '-' + pad(d.getMonth() + 1); renderNow(); },
+  weekdays() {
+    const A = st.adm, [Y, M] = A.month.split('-').map(Number), dim = new Date(Y, M, 0).getDate(), t = todayKey(), s = new Set(A.sel);
+    for (let d = 1; d <= dim; d++) { const dt = new Date(Y, M - 1, d), k = dkey(dt); if (k >= t && dt.getDay() > 0 && dt.getDay() < 6) s.add(k); }
+    A.sel = Array.from(s).sort(); renderNow();
+  },
+  selclear() { st.adm.sel = []; renderNow(); },
+  preset(v) { const [s, e] = v.split('|').map(Number), A = st.adm; A.rs = s; A.re = e; A.mask = rangeMask(s, e); renderNow(); },
+  mcell(v) { const A = st.adm, i = Number(v), m = A.mask.split(''); m[i] = m[i] === '1' ? '0' : '1'; A.mask = m.join(''); renderNow(); },
+  async savesched() {
+    const A = st.adm, t = todayKey(), dates = A.sel.filter(d => d >= t);
+    if (!dates.length) { toast('지난 날짜는 저장하지 않습니다'); return; }
+    if (A.mask === ZERO) { toast('열 시간을 선택해 주세요 (닫으려면 “선택일 닫기”)'); return; }
+    const up = {}; dates.forEach(d => { up[d] = A.mask; });
+    try { await writeAvail(A.schedCat, up); toast(dates.length + '일에 상담 가능 시간을 저장했습니다'); } catch(e) { dbErr(e); }
+  },
+  async closesched() {
+    const A = st.adm, up = {}; A.sel.forEach(d => { up[d] = ZERO; });
+    try { await writeAvail(A.schedCat, up); toast(A.sel.length + '일을 닫았습니다 (기존 예약은 유지)'); } catch(e) { dbErr(e); }
+  },
+  async cfgsave() {
+    const d = st.adm.cfgDraft || cfg();
+    const c = { orgName: String(d.orgName || '').trim() || DEF.orgName, notice: String(d.notice || '').trim(), contact: String(d.contact || '').trim(),
+      buffer: BUFS.includes(Number(d.buffer)) ? Number(d.buffer) : 60,
+      leadHours: Math.max(0, Number(d.leadHours) || 0), maxDays: Math.min(120, Math.max(1, Number(d.maxDays) || 30)), cancelHours: Math.max(0, Number(d.cancelHours) || 0) };
+    try { await S.set('config/main', c); st.adm.cfgDraft = null; toast('저장했습니다'); } catch(e) { dbErr(e); }
+  }
+};
+document.addEventListener('click', e => {
+  if (e.target.classList && e.target.classList.contains('ov')) { closeModal(); return; }
+  const t = e.target.closest('[data-act]'); if (!t || t.disabled) return;
+  const fn = ACT[t.dataset.act]; if (fn) { if (t.tagName === 'A') e.preventDefault(); fn(t.dataset.v, t, e); }
+});
+document.addEventListener('input', e => {
+  const t = e.target;
+  if (t.dataset.bind) { if (t.dataset.bind === 'pw') { const v = t.value.replace(/\D/g, '').slice(0, 4); if (v !== t.value) t.value = v; } st.book.form[t.dataset.bind] = t.value; }
+  else if (t.dataset.cfg) st.adm.cfgDraft = Object.assign({}, st.adm.cfgDraft || cfg(), { [t.dataset.cfg]: t.value });
+  else if (t.id === 'mi-pw' || t.id === 'm-pw') { const v = t.value.replace(/\D/g, '').slice(0, 4); if (v !== t.value) t.value = v; }
+});
+document.addEventListener('change', e => {
+  const t = e.target, k = t.dataset.change, A = st.adm;
+  if (t.dataset.cfg) st.adm.cfgDraft = Object.assign({}, st.adm.cfgDraft || cfg(), { [t.dataset.cfg]: t.value });
+  if (!k) return;
+  if (k === 'catfilter') { A.catFilter = t.value; renderNow(); }
+  else if (k === 'buf') setBuf(t.dataset.v, Number(t.value));
+  else if (k === 'rs' || k === 're') {
+    A[k] = Number(t.value);
+    if (A.re <= A.rs) { if (k === 'rs') A.re = Math.min(END, A.rs + 60); else A.rs = Math.max(START, A.re - 60); }
+    A.mask = rangeMask(A.rs, A.re); renderNow();
+  }
+});
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Enter') return;
+  const id = e.target && e.target.id;
+  if (id === 'l-id' || id === 'l-pw') ACT.login();
+  else if (id === 'mi-name' || id === 'mi-pw') ACT.mlookup();
+});
+function route() {
+  const h = (location.hash || '#book').slice(1);
+  st.view = ['book', 'mine', 'admin'].includes(h) ? h : 'book';
+  if (st.view === 'mine' && st.mine.auth && !st.mine.list && !st.mine.loading && st.ready) mineRefresh();
+  renderNow(); window.scrollTo(0, 0);
+}
+window.addEventListener('hashchange', route);
+
+/* ===================== 시작 ===================== */
+let unsubBookings = null;
+function startAdminSubs() { if (unsubBookings || !S) return; unsubBookings = S.watchCol('bookings', m => { st.bookings = m || {}; render(); }, e => { console.error(e); st.connErr = true; render(); }); }
+(async function boot() {
+  const withTimeout = (p, ms) => Promise.race([p, new Promise(r => setTimeout(() => r(null), ms))]);
+  const conf = window.FIREBASE_CONFIG;
+  if (conf && conf.projectId) {
+    try { S = await makeFirebase(conf); } catch(e) { console.error(e); st.fatal = '예약 서버에 연결하지 못했습니다. 잠시 후 다시 시도해 주세요.'; renderNow(); return; }
+  } else {
+    try { if (typeof claude !== 'undefined' && claude.use) { const db = await withTimeout(claude.use('db'), 8000); if (db) S = makeClaude(db); } } catch(e) { S = null; }
+    if (!S) S = makeLocal();
+  }
+  st.mode = S.mode;
+  st.adm.logged = ssGet('fo_admin') === '1';
+  try { const a = JSON.parse(ssGet('fo_mine') || 'null'); if (a && a.key) st.mine.auth = a; } catch(e) {}
+  try { const f = JSON.parse(lsGet('fo_form') || '{}'); if (f.name) st.book.form.name = f.name; if (f.branch) st.book.form.branch = f.branch; } catch(e) {}
+  const need = new Set(['config', 'cats', 'avail', 'days']);
+  const slowT = setTimeout(() => { if (!st.ready) { st.ready = true; st.slow = true; render(); } }, 10000);
+  const got = k => { need.delete(k); if (!need.size && !st.ready) { st.ready = true; clearTimeout(slowT); if (st.view === 'mine' && st.mine.auth && !st.mine.list) mineRefresh(); } st.slow = false; render(); };
+  const er = e => { console.error(e); st.connErr = true; render(); };
+  S.watchDoc('config/main', d => { st.config = d || {}; got('config'); }, er);
+  S.watchCol('cats', m => { st.cats = m || {}; got('cats'); }, er);
+  S.watchCol('avail', m => { st.avail = m || {}; got('avail'); }, er);
+  S.watchCol('days', m => { st.days = m || {}; got('days'); }, er);
+  if (st.adm.logged) startAdminSubs();
+  route();
+})();
+</script>
+</body>
+</html>
