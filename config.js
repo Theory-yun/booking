@@ -7,7 +7,14 @@
 // 실제 운영 시: README.md 의 "Firebase 연결" 순서대로 프로젝트를 만든 뒤
 // 아래 null 을 Firebase 콘솔에서 복사한 설정 객체로 바꿔 주세요.
 // ─────────────────────────────────────────────────────────────
-window.FIREBASE_CONFIG = null;
+window.FIREBASE_CONFIG = {
+    apiKey: "AIzaSyCaRKDkWjGaOdf4cDuSeNcRGYeTBOWSA3A",
+  authDomain: "fo-booking.firebaseapp.com",
+  projectId: "fo-booking",
+  storageBucket: "fo-booking.firebasestorage.app",
+  messagingSenderId: "175461050585",
+  appId: "1:175461050585:web:d691542c7135d0d23236c8"
+};
 
 /* 예시 (Firebase 콘솔 > 프로젝트 설정 > 내 앱 > SDK 설정 및 구성)
 window.FIREBASE_CONFIG = {
