@@ -27,7 +27,7 @@
 `config.js`를 비워 두면 **체험 모드**로 동작합니다. 체험 모드에서는 예약이 접속한 브라우저에만 저장됩니다. 여러 사람이 같이 쓰려면 아래 순서로 무료 Firebase 저장소를 연결해야 합니다.
 
 1. <https://console.firebase.google.com>에서 **프로젝트 추가**를 누릅니다. 애널리틱스는 꺼도 됩니다.
-2. 왼쪽 메뉴 **빌드 › Firestore Database**에서 **데이터베이스 만들기**를 누릅니다. 위치는 `asia-northeast3 (서울)`, 모드는 **프로덕션 모드**를 고릅니다.
+2. 왼쪽 메뉴 **Databases & Storage › Firestore**에서 **데이터베이스 만들기**를 누릅니다. 화면에 따라 메뉴 이름이 **빌드 › Firestore Database**로 나올 수도 있습니다. 에디션은 **Standard**, 위치는 `asia-northeast3 (서울)`, 보안 규칙은 **프로덕션 모드**를 고릅니다.
 3. Firestore의 **규칙** 탭에 이 저장소의 `firestore.rules` 내용을 붙여 넣고 **게시**합니다.
 4. **프로젝트 설정(톱니바퀴) › 내 앱 › 웹 앱 추가(</>)**에서 앱을 등록한 뒤, 화면에 나오는 `firebaseConfig = { ... }` 객체를 복사합니다.
 5. 이 저장소의 `config.js`를 GitHub에서 열고 연필 아이콘(편집)을 누릅니다. `window.FIREBASE_CONFIG = null;`을 `window.FIREBASE_CONFIG = { ...복사한 내용... };`으로 바꾸고 **Commit changes**를 누릅니다.
